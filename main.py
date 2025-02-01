@@ -19,7 +19,7 @@ else:
 # Authenticate with Google Sheets
 creds = Credentials.from_service_account_info(creds_dict, scopes=["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"])
 client = gspread.authorize(creds)
-sheet = client.open("TechCrunch Articles").sheet1  # Change to your Google Sheet name
+sheet = client.open("twitter").sheet1  # Change to your Google Sheet name
 
 
 # TechCrunch Latest Page URL
