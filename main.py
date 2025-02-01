@@ -1,17 +1,26 @@
+import os
+import json
+import base64
 import requests
 from bs4 import BeautifulSoup
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Google Sheets API setup
-SERVICE_ACCOUNT_FILE = "credentials.json"  # Path to your service account JSON file
-SHEET_NAME = "twitter"  # Change to your Google Sheet name
+# Get Google credentials from Railway environment variables
+google_creds_base64 = os.getenv("GOOGLE_CREDENTIALS")
 
-# Authenticate and connect to Google Sheets
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=scope)
+# Decode the Base64 string and load JSON credentials
+if google_creds_base64:
+    google_creds_json = base64.b64decode(google_creds_base64).decode("utf-8")
+    creds_dict = json.loads(google_creds_json)
+else:
+    raise Exception("GOOGLE_CREDENTIALS environment variable not found!")
+
+# Authenticate with Google Sheets
+creds = Credentials.from_service_account_info(creds_dict, scopes=["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"])
 client = gspread.authorize(creds)
-sheet = client.open(SHEET_NAME).sheet1  # Open first sheet
+sheet = client.open("TechCrunch Articles").sheet1  # Change to your Google Sheet name
+
 
 # TechCrunch Latest Page URL
 latest_url = "https://techcrunch.com/latest/"
